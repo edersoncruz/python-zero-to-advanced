@@ -5,7 +5,7 @@ frase_nova = frase.lower()
 
 i = 0 
 tamanho_frase = len(frase)
-max = 0
+maximo = 0
 
 while i < tamanho_frase:
     letra = frase_nova[i]
@@ -16,11 +16,11 @@ while i < tamanho_frase:
 
 
     quantidade_letras = frase_nova.count(letra)
-    if quantidade_letras > max:
-        max = quantidade_letras
+    if quantidade_letras > maximo:
+        maximo = quantidade_letras
         letra_maior = letra
     
     i += 1
 
-print(max)
+print(maximo)
 print(letra_maior)

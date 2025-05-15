@@ -16,3 +16,5 @@ if numero_inteiro.isdigit():
         print("Seu número é impar")
 else:
     print("Você não digitou um inteiro!")
+
+    
