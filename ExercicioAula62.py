@@ -52,7 +52,7 @@ cpf_onze_digitos = "".join(map(str, cpf_dez_digitos))
 
 print(f'CPF Válido: {cpf_onze_digitos}')
 
-
+###TESTE
 
 
 
