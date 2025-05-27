@@ -18,4 +18,5 @@ def zipper (lista_1, lista_2):
 
     return lista_zipada
 
+
 print (zipper(lista_a, lista_b))
