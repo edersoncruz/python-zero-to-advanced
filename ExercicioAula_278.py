@@ -35,10 +35,10 @@ class Emprestimo():
         for i in range(total_meses):
             vencimento = self.data_inicio_frmt + relativedelta(months=i)
             print(f'Parcela {i+1} {vencimento.strftime("%d/%m/%Y")}'
-                  f' R$ {valor_parcela:.2f}')
+                  f' R$ {valor_parcela:,.2f}')
 
 
-emprestimo_maria = Emprestimo('Maria', '20-12-2020', 5, 5000)
+emprestimo_maria = Emprestimo('Maria', '20-12-2020', 5, 1000000)
 
 emprestimo_maria.calcular_data_fim()
 
