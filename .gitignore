@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 
 .vscode/
+
+simple_api_rest_sqlite/
