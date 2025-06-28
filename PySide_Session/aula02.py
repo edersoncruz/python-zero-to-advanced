@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
  QApplication, QPushButton,
  QWidget, QGridLayout, QMainWindow
 )
+from PySide6.QtCore import Slot
 import sys
 
 app = QApplication(sys.argv)
@@ -46,8 +47,23 @@ layout.addWidget(botao2, 1, 2, 1, 1)
 layout.addWidget(botao3, 3, 1, 1, 2)
 
 
+@Slot()
 def slot_example(status_bar):
-    status_bar.showMessage('O meu slot foi executado')
+    def inner():
+        status_bar.showMessage('O Meu slot foi executado')
+    return inner
+
+
+@Slot()
+def outro_slot(checked):
+    print('Está marcado?', checked)
+
+
+@Slot()
+def terceiro_slot(action):
+    def inner():
+        outro_slot(action.isChecked())
+    return inner
 
 
 # Status bar
@@ -58,7 +74,15 @@ status_bar.showMessage("Mostrar MSG")
 menu = window.menuBar()
 primeiro_menu = menu.addMenu('Primeiro Menu')
 primeira_acao = primeiro_menu.addAction('Primeira Ação')
-primeira_acao.triggered.connect(lambda: slot_example(status_bar))
+primeira_acao.triggered.connect(slot_example(status_bar))
+
+segunda_action = primeiro_menu.addAction('Segunda Ação')
+segunda_action.setCheckable(True)
+segunda_action.toggled.connect(outro_slot)
+segunda_action.hovered.connect(terceiro_slot(segunda_action))
+
+botao1.clicked.connect(terceiro_slot(segunda_action))
+
 
 window.show()
 
