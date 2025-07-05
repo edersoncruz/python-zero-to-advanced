@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (QMainWindow, QWidget, QGridLayout, QPushButton,
-                               QLineEdit)
+                               QLineEdit, QMessageBox)
 from PySide6.QtCore import Qt
 
 
@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
 
         # Criando Botões (ajuste as linhas +1 para ficarem abaixo do display)
         self.create_buttons('button1', 'C', '2, 1, 1, 1')
-        self.create_buttons('button2', 'Back', '2, 2, 1, 1')
+        self.create_buttons('button2', '◀', '2, 2, 1, 1')
         self.create_buttons('button3', '^', '2, 3, 1, 1')
         self.create_buttons('button4', '/', '2, 4, 1, 1')
         self.create_buttons('button5', '7', '4, 1, 1, 1')
@@ -126,7 +126,10 @@ class MainWindow(QMainWindow):
                 valor_str = self.display1.text()
                 try:
                     valor_list = list(valor_str)
-                    if valor_list[0] == '-':
+                    # Verifica se a lista está vazia
+                    if not valor_list:
+                        return             
+                    elif valor_list[0] == '-':
                         valor_list.pop(0)
                     else:
                         valor_list.insert(0, '-')
@@ -179,7 +182,7 @@ class MainWindow(QMainWindow):
             name.clicked.connect(lambda: self.display1.setText(""))
             name.clicked.connect(lambda: self.display2.setText(""))
 
-        if text == "Back":
+        if text == "◀":
             name.clicked.connect(
                 lambda: self.display1.setText(self.display1.text()[:-1]))
 
@@ -187,71 +190,53 @@ class MainWindow(QMainWindow):
             def add_caret():
                 op_total = 0
                 current = self.display1.text()
+                if not current:
+                    current = '0'
                 if current and current[-1] in ["/", "*", "-", "+", "^"]:
                     current = current[:-1]
-                # Se o último caractere for uma barra, verifica se há mais de
-                # um operador
                 for op in ["*", "-", "+", "^", "/"]:
                     if op in current:
                         op_total += 1
-
-                    # Se houver mais de um operador, calcula o resultado
-                    # Isso evita que o usuário adicione múltiplos operadores
-                    # sem calcular
                     if op_total == 1:
                         self.calcular_resultado()
                         self.display1.setText(self.display1.text() + "^")
                         return
-                # Adiciona a barra ao final da expressão
                 self.display1.setText(current + "^")
             name.clicked.connect(add_caret)
 
         if text == "/":
             def add_div():
                 op_total = 0
-                # Verifica se o último caractere é um operador
                 current = self.display1.text()
+                if not current:
+                    current = '0'
                 if current and current[-1] in ["/", "*", "-", "+", "^"]:
                     current = current[:-1]
-                # Se o último caractere for uma barra, verifica se há mais de
-                # um operador
                 for op in ["*", "-", "+", "^", "/"]:
                     if op in current:
                         op_total += 1
-
-                    # Se houver mais de um operador, calcula o resultado
-                    # Isso evita que o usuário adicione múltiplos operadores
-                    # sem calcular
                     if op_total == 1:
                         self.calcular_resultado()
                         self.display1.setText(self.display1.text() + "/")
                         return
-                # Adiciona a barra ao final da expressão
                 self.display1.setText(current + "/")
-
-            # Adiciona a função ao botão
             name.clicked.connect(add_div)
 
         if text == "*":
             def add_mult():
                 op_total = 0
                 current = self.display1.text()
+                if not current:
+                    current = '0'
                 if current and current[-1] in ["/", "*", "-", "+", "^"]:
                     current = current[:-1]
-                # Se o último caractere for uma barra, verifica se há mais de
-                # um operador
                 for op in ["*", "-", "+", "^", "/"]:
                     if op in current:
                         op_total += 1
-
-                    # Se houver mais de um operador, calcula o resultado
-                    # Isso evita que o usuário adicione múltiplos operadores
-                    # sem calcular
                     if op_total == 1:
                         self.calcular_resultado()
                         self.display1.setText(self.display1.text() + "*")
                         return
-                # Adiciona a barra ao final da expressão
                 self.display1.setText(current + "*")
             name.clicked.connect(add_mult)
 
@@ -259,44 +244,35 @@ class MainWindow(QMainWindow):
             def add_sub():
                 op_total = 0
                 current = self.display1.text()
+                if not current:
+                    current = '0'
                 if current and current[-1] in ["/", "*", "-", "+", "^"]:
                     current = current[:-1]
-                    # Se o último caractere for uma barra, verifica se há mais
-                    # de um operador
                 for op in ["*", "-", "+", "^", "/"]:
                     if op in current:
                         op_total += 1
-
-                    # Se houver mais de um operador, calcula o resultado
-                    # Isso evita que o usuário adicione múltiplos operadores
-                    # sem calcular
                     if op_total == 1:
                         self.calcular_resultado()
                         self.display1.setText(self.display1.text() + "-")
                         return
-                # Adiciona a barra ao final da expressão
                 self.display1.setText(current + "-")
             name.clicked.connect(add_sub)
 
         if text == "+":
             def add_plus():
                 op_total = 0
-                # Verifica se o último caractere é um operador
                 current = self.display1.text()
+                if not current:
+                    current = '0'
                 if current and current[-1] in ["/", "*", "-", "+", "^"]:
                     current = current[:-1]
                 for op in ["*", "-", "+", "^", "/"]:
                     if op in current:
                         op_total += 1
-
-                    # Se houver mais de um operador, calcula o resultado
-                    # Isso evita que o usuário adicione múltiplos operadores
-                    # sem calcular
                     if op_total == 1:
                         self.calcular_resultado()
                         self.display1.setText(self.display1.text() + "+")
                         return
-                # Adiciona a barra ao final da expressão
                 self.display1.setText(current + "+")
             name.clicked.connect(add_plus)
 
@@ -314,23 +290,41 @@ class MainWindow(QMainWindow):
     def calcular_resultado(self):
         text = self.display1.text()
         negative = False
-        if text[0] == "-":
+        if text and text[0] == "-":
             text = text[1:]
             negative = True
-        # Remove o sinal negativo inicial para evitar erros
-        # Procura pelo operador
+
         for op in ["/", "*", "-", "+", "^"]:
             if op in text:
                 number1, number2 = text.split(op, 1)
                 operator = op
                 break
-        if negative:
-            number1 = - float(number1)
-            number2 = float(number2)
         else:
-            number1 = float(number1)
-            number2 = float(number2)
+            # Nenhum operador encontrado
+            try:
+                result = -float(text) if negative else float(text)
+            except Exception:
+                result = "Erro na expressão 1"
+            try:
+                valor_formatado = (
+                    f"{float(result):,.2f}"
+                    .replace(',', 'v')
+                    .replace('.', ',')
+                    .replace('v', '.')
+                )
+            except Exception:
+                valor_formatado = str(result)
+            self.display2.setText(valor_formatado)
+            self.display1.setText(valor_formatado)
+            return
+
         try:
+            number1 = -float(number1) if negative else float(number1)
+            if number2 == '':
+                number2 = 0.0
+            else:
+                number2 = float(number2)
+
             if operator == "/":
                 result = number1 / number2
             elif operator == "*":
@@ -342,11 +336,22 @@ class MainWindow(QMainWindow):
             elif operator == "^":
                 result = number1 ** number2
         except ZeroDivisionError:
+            msg = QMessageBox(self)
+            msg.setIcon(QMessageBox.Icon.Critical)
+            msg.setWindowTitle("Erro")
+            msg.setText("Erro: Divisão por zero")
+            msg.exec()
             result = "Erro: Divisão por zero"
         except Exception:
-            result = "Erro na expressão"
-        self.display2.setText(f"{result:.2f}")
-        self.display1.setText(f"{result:.2f}")
+            result = "Erro na expressão 2"
+        try:
+            valor_formatado = (
+                f"{float(result):,.2f}".replace(',', 'v')
+                .replace('.', ',').replace('v', '.'))
+        except Exception:
+            valor_formatado = str(result)
+        self.display2.setText(valor_formatado)
+        self.display1.setText(valor_formatado)
 
     def adjustFixedSize(self):
         # Ultima coisa a ser feita

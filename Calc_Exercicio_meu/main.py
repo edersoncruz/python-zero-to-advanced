@@ -13,6 +13,8 @@ if __name__ == '__main__':
     icon = QIcon(str(WINDOW_ICON_PATH))
     window.setWindowIcon(icon)
 
+    window.cw.setStyleSheet("background-color: #18191a;")
+
     # Executa Tudo
     window.show()
     app.exec()
