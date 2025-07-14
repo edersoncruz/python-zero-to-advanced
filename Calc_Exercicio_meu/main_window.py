@@ -302,6 +302,7 @@ class MainWindow(QMainWindow):
         else:
             # Nenhum operador encontrado
             try:
+                text = text.replace('.', '').replace(',', '.')
                 result = -float(text) if negative else float(text)
             except Exception:
                 result = "Erro na expressão 1"
@@ -319,6 +320,11 @@ class MainWindow(QMainWindow):
             return
 
         try:
+            # remove formatação brasileira apenas se houver vírgula
+            if ',' in number1:
+                number1 = number1.replace('.', '').replace(',', '.')
+            if ',' in number2:
+                number2 = number2.replace('.', '').replace(',', '.')
             number1 = -float(number1) if negative else float(number1)
             if number2 == '':
                 number2 = 0.0
