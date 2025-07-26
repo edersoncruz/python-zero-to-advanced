@@ -31,7 +31,7 @@ Este repositório contém os códigos que estou desenvolvendo durante o curso [P
 1. **Clone o repositório:**
 
 ```bash
-git clone https://github.com/edersoncruz/https://github.com/edersoncruz/python-zero-to-advanced.git.git
+git clone https://github.com/edersoncruz/python-zero-to-advanced.git
 cd python-zero-to-advanced
 ```
 
