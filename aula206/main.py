@@ -92,6 +92,7 @@ with connection:
         data4 = (
             ("Siri", 33,),
             ("Alexa", 22,),
+            ("Bard", 55,),
         )
         result = cursor.executemany(sql, data4)  # type: ignore
 
@@ -99,12 +100,27 @@ with connection:
 
     # Lendo os valores com SELECT
     with connection.cursor() as cursor:
+        # menor_id = input('Digite o menor ID: ')
+        # maior_id = input('Digite o maior ID: ')
+        menor_id = 2
+        maior_id = 4
         sql = (
             f'SELECT * FROM {TABLE_NAME} '
+            f'WHERE id BETWEEN %s AND %s '
         )
-        cursor.execute(sql)  # type: ignore
+        cursor.execute(sql, (menor_id, maior_id,))  # type: ignore
         data5 = cursor.fetchall()  # type: ignore
 
-        for row in data5:
-            print(f'ID: {row[0]}, Nome: {row[1]}, Idade: {row[2]}')
+    # DELETE - Excluindo um registro específico
+    with connection.cursor() as cursor:
+        sql = (
+            f'DELETE FROM {TABLE_NAME} '
+            'WHERE id = %s '
+        )
+        cursor.execute(sql, (3,))
+        connection.commit()
+        
+        cursor.execute(f'SELECT * FROM {TABLE_NAME} ')  # type: ignore
 
+        for row in cursor.fetchall():
+            print(row)
