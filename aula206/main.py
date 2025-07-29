@@ -122,5 +122,20 @@ with connection:
         
         cursor.execute(f'SELECT * FROM {TABLE_NAME} ')  # type: ignore
 
+        # for row in cursor.fetchall():
+        #     print(row)
+
+    # UPDATE - Atualizando um registro específico
+    with connection.cursor() as cursor:
+        sql = (
+            f'UPDATE {TABLE_NAME} '
+            'SET nome = %s, idade = %s '
+            'WHERE id = %s '
+        )
+        cursor.execute(sql, ('Ederson', 26, 4))
+        connection.commit()
+        
+        cursor.execute(f'SELECT * FROM {TABLE_NAME} ')  # type: ignore
+
         for row in cursor.fetchall():
             print(row)
