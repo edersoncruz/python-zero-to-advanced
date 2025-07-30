@@ -3,11 +3,14 @@
 # Pypy: https://pypi.org/project/pymysql/
 # GitHub: https://github.com/PyMySQL/PyMySQL
 import os
+from typing import cast
 
 import dotenv
 import pymysql
+import pymysql.cursors
 
 TABLE_NAME = 'customers'
+CURRENT_CURSOR = pymysql.cursors.DictCursor
 
 dotenv.load_dotenv()
 
@@ -16,7 +19,8 @@ connection = pymysql.connect(
     user=os.environ['MYSQL_USER'],
     password=os.environ['MYSQL_PASSWORD'],
     database=os.environ['MYSQL_DATABASE'],
-    charset='utf8mb4'
+    charset='utf8mb4',
+    cursorclass=CURRENT_CURSOR,
 )
 
 with connection:
@@ -34,7 +38,8 @@ with connection:
     connection.commit()
 
     # Começo a manipular dados a partir daqui
-    # Inserindo um registro usando um placeholder e um iterável
+
+    # Inserindo um valor usando placeholder e um iterável
     with connection.cursor() as cursor:
         sql = (
             f'INSERT INTO {TABLE_NAME} '
@@ -42,46 +47,50 @@ with connection:
             'VALUES '
             '(%s, %s) '
         )
-        data = ('Sora', 18)
+        data = ('Luiz', 18)
         result = cursor.execute(sql, data)  # type: ignore
         # print(sql, data)
         # print(result)
     connection.commit()
 
-    # Inserindo outro registro usando um placeholder e um dicionário
+    # Inserindo um valor usando placeholder e um dicionário
     with connection.cursor() as cursor:
         sql = (
             f'INSERT INTO {TABLE_NAME} '
             '(nome, idade) '
             'VALUES '
-            '(%(nome)s, %(idade)s) '
+            '(%(name)s, %(age)s) '
         )
         data2 = {
-            "nome": "Ovyva",
-            "idade": 27,
+            "age": 37,
+            "name": "Le",
         }
         result = cursor.execute(sql, data2)  # type: ignore
-
+        # print(sql)
+        # print(data2)
+        # print(result)
     connection.commit()
-    
-    # Inserindo vários registros de uma vez usando uma tupla e dicionários
+
+    # Inserindo vários valores usando placeholder e um tupla de dicionários
     with connection.cursor() as cursor:
         sql = (
             f'INSERT INTO {TABLE_NAME} '
             '(nome, idade) '
             'VALUES '
-            '(%(nome)s, %(idade)s) '
+            '(%(name)s, %(age)s) '
         )
         data3 = (
-            {"nome": "GPT","idade": 33,},
-            {"nome": "Gemini","idade": 22,},
-            {"nome": "Cortana","idade": 55,},
+            {"name": "Sah", "age": 33, },
+            {"name": "Júlia", "age": 74, },
+            {"name": "Rose", "age": 53, },
         )
         result = cursor.executemany(sql, data3)  # type: ignore
-
+        # print(sql)
+        # print(data3)
+        # print(result)
     connection.commit()
 
-    # Inserindo vários registros usando um placeholder e uma tupla com tuplas
+    # Inserindo vários valores usando placeholder e um tupla de tuplas
     with connection.cursor() as cursor:
         sql = (
             f'INSERT INTO {TABLE_NAME} '
@@ -90,52 +99,79 @@ with connection:
             '(%s, %s) '
         )
         data4 = (
-            ("Siri", 33,),
-            ("Alexa", 22,),
-            ("Bard", 55,),
+            ("Siri", 22, ),
+            ("Helena", 15, ),
+            ("Luiz", 18, ),
         )
         result = cursor.executemany(sql, data4)  # type: ignore
-
+        # print(sql)
+        # print(data4)
+        # print(result)
     connection.commit()
 
     # Lendo os valores com SELECT
     with connection.cursor() as cursor:
-        # menor_id = input('Digite o menor ID: ')
-        # maior_id = input('Digite o maior ID: ')
+        # menor_id = int(input('Digite o menor id: '))
+        # maior_id = int(input('Digite o maior id: '))
         menor_id = 2
         maior_id = 4
+
         sql = (
             f'SELECT * FROM {TABLE_NAME} '
-            f'WHERE id BETWEEN %s AND %s '
+            'WHERE id BETWEEN %s AND %s  '
         )
-        cursor.execute(sql, (menor_id, maior_id,))  # type: ignore
+
+        cursor.execute(sql, (menor_id, maior_id))  # type: ignore
+        # print(cursor.mogrify(sql, (menor_id, maior_id)))  # type: ignore
         data5 = cursor.fetchall()  # type: ignore
 
-    # DELETE - Excluindo um registro específico
+        # for row in data5:
+        # print(row)
+
+    # Apagando com DELETE, WHERE e placeholders no PyMySQL
     with connection.cursor() as cursor:
         sql = (
             f'DELETE FROM {TABLE_NAME} '
-            'WHERE id = %s '
+            'WHERE id = %s'
         )
-        cursor.execute(sql, (3,))
+        cursor.execute(sql, (1,))  # type: ignore
         connection.commit()
-        
+
         cursor.execute(f'SELECT * FROM {TABLE_NAME} ')  # type: ignore
 
-        # for row in cursor.fetchall():
+        # for row in cursor.fetchall():  # type: ignore
         #     print(row)
 
-    # UPDATE - Atualizando um registro específico
+    # Editando com UPDATE, WHERE e placeholders no PyMySQL
     with connection.cursor() as cursor:
+        cursor = cast(CURRENT_CURSOR, cursor)
+
         sql = (
             f'UPDATE {TABLE_NAME} '
-            'SET nome = %s, idade = %s '
-            'WHERE id = %s '
+            'SET nome=%s, idade=%s '
+            'WHERE id=%s'
         )
-        cursor.execute(sql, ('Ederson', 26, 4))
-        connection.commit()
-        
-        cursor.execute(f'SELECT * FROM {TABLE_NAME} ')  # type: ignore
+        cursor.execute(sql, ('Eleonor', 102, 4))
 
-        for row in cursor.fetchall():
+        cursor.execute(
+            f'SELECT id from {TABLE_NAME} ORDER BY id DESC LIMIT 1'
+        )
+        lastIdFromSelect = cursor.fetchone()
+
+        resultFromSelect = cursor.execute(f'SELECT * FROM {TABLE_NAME} ')
+
+        data6 = cursor.fetchall()
+
+        for row in data6:
             print(row)
+
+        print('resultFromSelect', resultFromSelect)
+        print('len(data6)', len(data6))
+        print('rowcount', cursor.rowcount)
+        print('lastrowid', cursor.lastrowid)
+        print('lastrowid na mão', lastIdFromSelect)
+
+        cursor.scroll(0, 'absolute')
+        print('rownumber', cursor.rownumber)
+
+    connection.commit()
