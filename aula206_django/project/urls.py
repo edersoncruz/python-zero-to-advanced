@@ -18,11 +18,16 @@ from django.contrib import admin
 from django.urls import path
 from django.http import HttpResponse
 
-def my_view(request):
-    print("This is my view")
-    return HttpResponse("Hello, world! This is my view.")
+def home(request):
+    print("This is my Home view")
+    return HttpResponse("Hello, world! This is my Home.")
+
+def blog(request):
+    print("This is my blog")
+    return HttpResponse("Hello, world! This is my blog.")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('blog/', my_view),
+    path('blog/', blog),
+    path('', home),
 ]
