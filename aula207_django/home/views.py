@@ -4,4 +4,13 @@ from django.shortcuts import render
 
 def home(request):
     print("This is my Home view")
-    return render(request, 'home/index.html')
+
+    context = {
+            'text': 'Estamos na home 1'
+        }
+
+    return render(
+        request, 
+        'home/index.html',
+        context,
+        )
