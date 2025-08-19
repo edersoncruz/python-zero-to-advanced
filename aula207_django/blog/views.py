@@ -30,3 +30,17 @@ def exemplo(request):
         'blog/exemplo.html',
         context
         )
+
+def post(request, id):
+    print("This is my post view", id)
+
+    context = {
+            'text': 'Estamos no postss',
+            'posts': posts
+        }
+    
+    return render(
+        request, 
+        'blog/index.html',
+        context
+        )
