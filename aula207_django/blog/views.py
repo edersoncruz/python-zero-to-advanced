@@ -31,16 +31,23 @@ def exemplo(request):
         context
         )
 
-def post(request, id):
-    print("This is my post view", id)
+def post(request, post_id):
+    found_post: dict = None
+
+    for post in posts:
+        if post['id'] == post_id:
+            found_post = post
+            break
+        
 
     context = {
             'text': 'Estamos no postss',
-            'posts': posts
+            'post': found_post,
+            'title': found_post['title'] + ' - '
         }
     
     return render(
         request, 
-        'blog/index.html',
+        'blog/post.html',
         context
         )
